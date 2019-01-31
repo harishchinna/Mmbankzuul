@@ -1,0 +1,8 @@
+package com.moneymoney.app.Mmbank.receiver;
+
+import org.springframework.stereotype.Component;
+
+@Component
+public class Receiver {
+
+}

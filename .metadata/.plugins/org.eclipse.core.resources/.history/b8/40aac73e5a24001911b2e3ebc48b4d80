@@ -1,0 +1,20 @@
+package com.moneymoney.app.Mmbank.receiver;
+
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.moneymoney.app.Mmbank.accounts.Transaction;
+
+@Component
+public class Receiver {
+
+	@Autowired
+	Transaction transaction;
+	 @RabbitListener(queues = "transactionQueue")
+	 public void receiver(Transaction transaction)
+	 {
+		 transaction.updateBalance(transaction);
+		 
+	 }
+}

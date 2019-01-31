@@ -3,6 +3,7 @@ package com.moneymoney.web.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
@@ -22,6 +23,9 @@ public class BankAppController {
 
 	@Autowired
 	private RestTemplate restTemplate;
+	
+	@Autowired
+	private RabbitMessagingTemplate rabbit;
 
 	@RequestMapping("/")
 	public String index() {

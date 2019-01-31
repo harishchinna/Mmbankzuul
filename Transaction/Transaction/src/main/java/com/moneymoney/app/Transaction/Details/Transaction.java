@@ -1,5 +1,6 @@
 package com.moneymoney.app.Transaction.Details;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
@@ -8,7 +9,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Transaction {
+public class Transaction implements Serializable{
+	
+	private static final long serialVersionUID = 2301900369974907490L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)//Auto Generation of PK
 	private Integer transactionId;

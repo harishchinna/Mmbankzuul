@@ -1,6 +1,5 @@
 package com.moneymoney.app.Transaction.resource;
 
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,50 +14,67 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.moneymoney.app.Transaction.Details.CurrentDataSet;
+import com.moneymoney.app.Transaction.Details.Sender;
 import com.moneymoney.app.Transaction.Details.Transaction;
 import com.moneymoney.app.Transaction.service.TransactionService;
 
 @RestController
 @RequestMapping("/transactions")
 public class TransactionResource {
-	
+
 	@Autowired
 	private TransactionService service;
 	@Autowired
 	private RestTemplate restTemplate;
-	
+
+	@Autowired
+	private Sender sender;
+
 	@PostMapping("/deposit")
-	public ResponseEntity<Transaction> deposit(@RequestBody Transaction transaction)
-	{
+	public ResponseEntity<Transaction> deposit(@RequestBody Transaction transaction) {
 		/* System.out.println("welcome"); */
-		ResponseEntity<Double> entity = restTemplate.getForEntity("http://Mmbank/accounts/"+transaction.getAccountNumber() +"/balance", Double.class);
+		ResponseEntity<Double> entity = restTemplate
+				.getForEntity("http://Mmbank/accounts/" + transaction.getAccountNumber() + "/balance", Double.class);
 		/* System.out.println(entity); */
-		Double CurrentBalance=entity.getBody();
+		Double CurrentBalance = entity.getBody();
 		transaction.getTransactionDate();
-		Double updatedBalance = service.deposit(transaction.getAccountNumber(),transaction.getTransactionDetails(),CurrentBalance , transaction.getAmount(),LocalDateTime.now());
+		Double updatedBalance = service.deposit(transaction.getAccountNumber(), transaction.getTransactionDetails(),
+				CurrentBalance, transaction.getAmount(), LocalDateTime.now());
 		System.out.println(updatedBalance);
-		restTemplate.put("http://Mmbank/accounts/"+transaction.getAccountNumber()+"?currentBalance="+updatedBalance, null);
+		transaction.setCurrentBalance(updatedBalance);
+		sender.send(transaction);
+		/*
+		 * restTemplate.put( "http://Mmbank/accounts/" + transaction.getAccountNumber()
+		 * + "?currentBalance=" + updatedBalance, null);
+		 */
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
+
 	@PostMapping("/withdraw")
-	public ResponseEntity<Transaction> withdraw(@RequestBody Transaction transaction)
-	{
-		ResponseEntity<Double> entity = restTemplate.getForEntity("http://Mmbank/accounts/"+transaction.getAccountNumber() +"/balance", Double.class);
-		Double CurrentBalance=entity.getBody();
+	public ResponseEntity<Transaction> withdraw(@RequestBody Transaction transaction) {
+		ResponseEntity<Double> entity = restTemplate
+				.getForEntity("http://Mmbank/accounts/" + transaction.getAccountNumber() + "/balance", Double.class);
+		Double CurrentBalance = entity.getBody();
 		transaction.getTransactionDate();
-		Double updatedBalance = service.withdraw(transaction.getAccountNumber(),transaction.getTransactionDetails(),CurrentBalance , transaction.getAmount(),LocalDateTime.now());
+		Double updatedBalance = service.withdraw(transaction.getAccountNumber(), transaction.getTransactionDetails(),
+				CurrentBalance, transaction.getAmount(), LocalDateTime.now());
 		System.out.println(updatedBalance);
-		restTemplate.put("http://Mmbank/accounts/"+transaction.getAccountNumber()+"?currentBalance="+updatedBalance, null);
+		transaction.setCurrentBalance(updatedBalance);
+		sender.send(transaction);
+
+		/*
+		 * restTemplate.put("http://Mmbank/accounts/"+transaction.getAccountNumber()+
+		 * "?currentBalance="+updatedBalance, null);
+		 */
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
-	
+
 	@GetMapping("/statements")
-	public ResponseEntity<CurrentDataSet> listOfTransactions(){
-		CurrentDataSet currentDataSet =new CurrentDataSet();
+	public ResponseEntity<CurrentDataSet> listOfTransactions() {
+		CurrentDataSet currentDataSet = new CurrentDataSet();
 		List<Transaction> transactions = service.listOfTransactions();
 		currentDataSet.setTransactions(transactions);
 		return new ResponseEntity<>(currentDataSet, HttpStatus.OK);
 	}
-	
 
 }

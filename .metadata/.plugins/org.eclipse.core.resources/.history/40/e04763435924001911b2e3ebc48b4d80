@@ -1,0 +1,5 @@
+package com.moneymoney.app.Mmbank.receiver;
+
+public class Receiver {
+
+}

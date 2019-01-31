@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.moneymoney.app.Mmbank.accounts.BankAccount;
 import com.moneymoney.app.Mmbank.accounts.SavingsAccount;
+import com.moneymoney.app.Mmbank.accounts.Transaction;
 import com.moneymoney.app.Mmbank.service.AccountService;
 
 @RestController
@@ -54,12 +55,21 @@ public class AccountResource {
 	 {
 		 service.deleteAccount(accountNumber);
 	 }
-	 @PutMapping("/{accountNumber}")
-	 public void updateBalance(@PathVariable int accountNumber ,@RequestParam("currentBalance") double currentBalance)
+
+	/*
+	 * @PutMapping("/{accountNumber}") public void updateBalance(@PathVariable int
+	 * accountNumber ,@RequestParam("currentBalance") double currentBalance) {
+	 * Optional<BankAccount> object = service.getById(accountNumber); BankAccount
+	 * account = object.get(); account.setCurrentBalance(currentBalance);
+	 * service.updateBalance(account); }
+	 */
+	 
+	 public void updateBalance(Transaction transaction)
 	 {
-		 Optional<BankAccount> object = service.getById(accountNumber);
+		 Optional<BankAccount> object = service.getById(transaction.getAccountNumber());
+		
 		 BankAccount account = object.get();
-		 account.setCurrentBalance(currentBalance);
+		 account.setCurrentBalance(transaction.getCurrentBalance());
 		 service.updateBalance(account);
 	 }
 	 @GetMapping("/{accountNumber}/balance")

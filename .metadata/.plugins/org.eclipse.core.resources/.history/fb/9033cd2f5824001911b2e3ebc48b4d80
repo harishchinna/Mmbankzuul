@@ -1,0 +1,5 @@
+package com.moneymoney.app.Transaction.Details;
+
+public class Sender {
+
+}

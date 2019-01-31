@@ -1,0 +1,10 @@
+package com.moneymoney.app.Transaction.Details;
+
+import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+
+public class Sender {
+ 
+	@Autowired
+	private RabbitMessagingTemplate rabbit;
+}
